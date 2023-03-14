@@ -1,6 +1,7 @@
-import PropTypes from 'prop-types';
-
 import { FaTrashAlt, FaUser } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteContact } from 'redux/contactsSlice';
+import { getFilteredContacts } from 'redux/selectors';
 
 import {
   ListIcon,
@@ -12,7 +13,10 @@ import {
   ContactsFlexCeil,
 } from './ContactList.styled';
 
-export const ContactList = ({ contacts, onRemove }) => {
+export const ContactList = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(getFilteredContacts);
+
   return (
     <ContactsTable>
       <thead>
@@ -37,9 +41,7 @@ export const ContactList = ({ contacts, onRemove }) => {
               <ContactsTableCeil>
                 <ListBtn
                   type="button"
-                  onClick={() => {
-                    onRemove(id);
-                  }}
+                  onClick={() => dispatch(deleteContact(id))}
                 >
                   <FaTrashAlt size="20" />
                 </ListBtn>
@@ -50,15 +52,4 @@ export const ContactList = ({ contacts, onRemove }) => {
       </tbody>
     </ContactsTable>
   );
-};
-
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  onRemove: PropTypes.func.isRequired,
 };

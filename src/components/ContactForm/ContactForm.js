@@ -1,6 +1,6 @@
-import PropTypes from 'prop-types';
-
 import { AiOutlineUserAdd } from 'react-icons/ai';
+import { addContact } from 'redux/contactsSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   Form,
@@ -10,15 +10,33 @@ import {
   Input,
   Button,
 } from './ContactForm.styled';
+import { nanoid } from 'nanoid';
+import { getContacts } from 'redux/selectors';
 
-export const ContactForm = ({ onSubmit }) => {
+export const ContactForm = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+
   const handleSubmit = e => {
     e.preventDefault();
 
-    onSubmit(
-      e.currentTarget.elements.name.value,
-      e.currentTarget.elements.number.value
+    const contact = {
+      name: e.currentTarget.elements.name.value,
+      number: e.currentTarget.elements.number.value,
+      id: nanoid(),
+    };
+
+    const currentName = contacts.find(
+      ({ name }) => name.toLowerCase() === contact.name.toLowerCase()
     );
+
+    if (currentName) {
+      console.log(currentName);
+      alert(`${currentName.name} is already exist!`);
+      return;
+    }
+
+    dispatch(addContact(contact));
 
     e.target.reset();
   };
@@ -58,8 +76,4 @@ export const ContactForm = ({ onSubmit }) => {
       </Button>
     </Form>
   );
-};
-
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
 };
